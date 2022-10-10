@@ -108,28 +108,27 @@ class _MyListItem extends StatelessWidget {
             const SizedBox(width: 24),
             TextButton(
               // ignore: iterable_contains_unrelated_type
-              onPressed: MyCatalog.cartItems.value.contains(item)
-                  ? null
-                  : () {
-                      // Se o item não estiver no carrinho, deixamos o usuário adicioná-lo.
-                      // Estamos usando context.read() aqui porque o retorno de chamada
-                      // é executado sempre que o usuário toca no botão. Em outros
-                      // palavras, ele é executado fora do método build.
-                      MyCatalog.cartItems.value.add(item);
-                    },
-              style: ButtonStyle(
-                overlayColor:
-                    MaterialStateProperty.resolveWith<Color?>((states) {
-                  if (states.contains(MaterialState.pressed)) {
-                    return Theme.of(context).primaryColor;
-                  }
-                  return null; // Defer to the widget's default.
-                }),
-              ),
+              onPressed: () {
+                final existe = MyCatalog.cartItems.value
+                    .where((element) => element.name == item.name.toString());
+                if (existe.isEmpty) {
+                  MyCatalog.cartItems.value.add(item);
+                  MyCatalog.cartItems.notifyListeners();
+                }
+                print('item.name.toString() ${item.name.toString()}');
+                print(
+                    'MyCatalog.cartItems.value = ${MyCatalog.cartItems.value}');
+              },
+              style: TextButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 20)),
               child: MyCatalog.cartItems.value
-                      .contains(CatalogModel().getByPosition(index))
-                  ? const Icon(Icons.check, semanticLabel: 'ADDED')
-                  : const Text('ADD'),
+                      .where((element) => element.name == item.name.toString())
+                      .isNotEmpty
+                  ? const Icon(
+                      Icons.check,
+                      color: Colors.black,
+                    )
+                  : const Text('ADD', style: TextStyle(color: Colors.black)),
             ),
           ],
         ),
