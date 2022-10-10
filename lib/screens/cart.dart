@@ -15,6 +15,9 @@ class _MyCartState extends State<MyCart> {
   // final _carts = CartModel();
 
   @override
+  void initState() {}
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +37,7 @@ class _MyCartState extends State<MyCart> {
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: value.length,
-                      itemBuilder: (context, index) {
+                      itemBuilder: (_, index) {
                         return ListTile(
                           leading: const Icon(Icons.done),
                           title: Text(value[index].name),
@@ -42,9 +45,10 @@ class _MyCartState extends State<MyCart> {
                             icon: const Icon(Icons.remove_circle_outline),
                             onPressed: () {
                               // ignore: list_remove_unrelated_type
-                              MyCatalog.cartItems.value
-                                  .remove(value[index].name);
-                              setState;
+                              MyCatalog.cartItems.value.removeAt(index);
+                              MyCatalog.cartItems.notifyListeners();
+
+                              initState();
                               // MyCatalog.remove(item);
                             },
                           ),
