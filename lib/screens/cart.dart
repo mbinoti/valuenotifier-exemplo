@@ -99,22 +99,27 @@ class _CartTotal extends StatelessWidget {
     var hugeStyle =
         Theme.of(context).textTheme.headline1!.copyWith(fontSize: 48);
 
+    int sumTotalPrice() {
+      // final numbers = <double>[10, 2, 5, 0.5];
+      // const initialValue = 100.0;
+      // final result = numbers.fold<double>(
+      //     initialValue, (previousValue, element) => previousValue + element);
+      // print(result);
+
+      int initialValue = 0;
+      final numbers = MyCatalog.cartItems.value.fold<int>(initialValue,
+          (previousValue, element) => previousValue + element.price);
+
+      return numbers;
+    }
+
     return SizedBox(
       height: 200,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Another way to listen to a model's change is to include
-            // the Consumer widget. This widget will automatically listen
-            // to CartModel and rerun its builder on every change.
-            //
-            // The important thing is that it will not rebuild
-            // the rest of the widgets in this build method.
-
-            // Consumer<CartModel>(
-            //     builder: (context, cart, child) =>
-            //         Text('\$${cart.totalPrice}', style: hugeStyle)),
+            Text('${sumTotalPrice()}'),
             const SizedBox(width: 24),
             TextButton(
               onPressed: () {
