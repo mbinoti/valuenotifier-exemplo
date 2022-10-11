@@ -12,8 +12,6 @@ class MyCart extends StatefulWidget {
 }
 
 class _MyCartState extends State<MyCart> {
-  // final _carts = CartModel();
-
   @override
   void initState() {}
 
@@ -47,7 +45,6 @@ class _MyCartState extends State<MyCart> {
                               // ignore: list_remove_unrelated_type
                               MyCatalog.cartItems.value.removeAt(index);
                               MyCatalog.cartItems.notifyListeners();
-
                               initState();
                               // MyCatalog.remove(item);
                             },
@@ -100,12 +97,6 @@ class _CartTotal extends StatelessWidget {
         Theme.of(context).textTheme.headline1!.copyWith(fontSize: 48);
 
     int sumTotalPrice() {
-      // final numbers = <double>[10, 2, 5, 0.5];
-      // const initialValue = 100.0;
-      // final result = numbers.fold<double>(
-      //     initialValue, (previousValue, element) => previousValue + element);
-      // print(result);
-
       int initialValue = 0;
       final numbers = MyCatalog.cartItems.value.fold<int>(initialValue,
           (previousValue, element) => previousValue + element.price);

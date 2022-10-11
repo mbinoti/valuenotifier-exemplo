@@ -4,31 +4,12 @@ import 'package:flutter/material.dart';
 
 import '../models/item.dart';
 
-class MyCatalog extends StatelessWidget {
+class MyCatalog extends StatefulWidget {
   static final ValueNotifier<List<Item>> cartItems =
       ValueNotifier<List<Item>>([]);
 
-  late CatalogModel _catalog;
-
   /// Internal, private state of the cart. Stores the ids of each item.2
   static final List<int> _itemIds = [];
-
-  /// The current catalog. Used to construct items from numeric ids.3
-  CatalogModel get catalog => _catalog;
-  set catalog(CatalogModel newCatalog) {
-    _catalog = newCatalog;
-    // Notify listeners, in case the new catalog provides information
-    // different from the previous one. For example, availability of an item
-    // might have changed.
-    // notifyListeners();
-  }
-
-  /// List of items in the cart.
-  List<Item> get items => _itemIds.map((id) => _catalog.getById(id)).toList();
-
-  /// The current total price of all items.
-  int get totalPrice =>
-      items.fold(0, (total, current) => total + current.price);
 
   /// Adds [item] to cart. This is the only way to modify the cart from outside.
   static void add(Item item) {
@@ -47,10 +28,38 @@ class MyCatalog extends StatelessWidget {
   }
 
   @override
+  State<MyCatalog> createState() => _MyCatalogState();
+}
+
+class _MyCatalogState extends State<MyCatalog> {
+  late CatalogModel _catalog;
+
+  /// The current catalog. Used to construct items from numeric ids.3
+  CatalogModel get catalog => _catalog;
+
+  set catalog(CatalogModel newCatalog) {
+    _catalog = newCatalog;
+    // Notify listeners, in case the new catalog provides information
+    // different from the previous one. For example, availability of an item
+    // might have changed.
+    // notifyListeners();
+  }
+
+  /// List of items in the cart.
+  List<Item> get items =>
+      MyCatalog._itemIds.map((id) => _catalog.getById(id)).toList();
+
+  /// The current total price of all items.
+  int get totalPrice =>
+      items.fold(0, (total, current) => total + current.price);
+
+  @override
+  void initState() {}
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder<List<Item>>(
-        valueListenable: cartItems,
+        valueListenable: MyCatalog.cartItems,
         builder: (context, value, child) {
           return CustomScrollView(
             slivers: [
@@ -89,7 +98,6 @@ class _MyListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var item = CatalogModel().getByPosition(index);
-    // var textTheme = Theme.of(context).textTheme.headline6;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -114,10 +122,10 @@ class _MyListItem extends StatelessWidget {
                 if (existe.isEmpty) {
                   MyCatalog.cartItems.value.add(item);
                   MyCatalog.cartItems.notifyListeners();
+                } else {
+                  MyCatalog.cartItems.value.removeAt(index);
+                  MyCatalog.cartItems.notifyListeners();
                 }
-                print('item.name.toString() ${item.name.toString()}');
-                print(
-                    'MyCatalog.cartItems.value = ${MyCatalog.cartItems.value}');
               },
               style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20)),
